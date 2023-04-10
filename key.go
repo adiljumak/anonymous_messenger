@@ -18,4 +18,4 @@ func getKeyBuilder() KeyBuilder {
 	return DummyKeyBuilder{}
 }
 
-var key_builder = getKeyBuilder()
+var keyBuilder = getKeyBuilder()

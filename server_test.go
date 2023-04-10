@@ -24,19 +24,19 @@ func TestIndexPage(t *testing.T) {
 }
 
 func TestSaveMessage(t *testing.T) {
-	test_message := "foo"
-	post_data := strings.NewReader(fmt.Sprintf("message=%s", test_message))
-	request, _ := http.NewRequest("POST", "/", post_data)
+	testMessage := "foo"
+	postData := strings.NewReader(fmt.Sprintf("message=%s", testMessage))
+	request, _ := http.NewRequest("POST", "/", postData)
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
 	handleTestRequest(w, request) 
 	if w.Code != 200 {
 		t.Error("save is not 200")
 	}
-	key := key_builder.Get() 
-	saved_message, _ := keeper.Get(key) 
+	key := keyBuilder.Get() 
+	savedMessage, _ := keeper.Get(key) 
 
-	if saved_message != test_message {
+	if savedMessage != testMessage {
 		t.Error("message was not saved")
 	}
 
