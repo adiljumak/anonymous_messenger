@@ -9,18 +9,18 @@ import (
 	"testing"
 )
 
-func handleTestRequest(w *httptest.ResponseRecorder, r *http.Request) { 
+func handleTestRequest(w *httptest.ResponseRecorder, r *http.Request) {
 	router := getRouter()
 	router.ServeHTTP(w, r)
 }
 
 func TestIndexPage(t *testing.T) {
-	request, _ := http.NewRequest("GET", "/", nil) 
-	w := httptest.NewRecorder() 
+	request, _ := http.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
 	handleTestRequest(w, request)
 	if w.Code != 200 {
 		t.Error("index page is not 200")
-	} 
+	}
 }
 
 func TestSaveMessage(t *testing.T) {
@@ -29,21 +29,56 @@ func TestSaveMessage(t *testing.T) {
 	request, _ := http.NewRequest("POST", "/", postData)
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
-	handleTestRequest(w, request) 
+	handleTestRequest(w, request)
 	if w.Code != 200 {
 		t.Error("save is not 200")
 	}
-	key := keyBuilder.Get() 
-	savedMessage, _ := keeper.Get(key) 
+	key := keyBuilder.Get()
+	savedMessage, _ := keeper.Get(key)
 
 	if savedMessage != testMessage {
 		t.Error("message was not saved")
 	}
 
 	result := w.Result()
-	defer result.Body.Close() 
+	defer result.Body.Close()
 	data, _ := ioutil.ReadAll(result.Body)
 	if !strings.Contains(string(data), key) {
 		t.Error("result page without key")
+	}
+}
+
+func TestReadMessage(t *testing.T) {
+	testMessage := "helloMessage"
+	key := keyBuilder.Get()
+	keeper.Set(key, testMessage)
+
+	request, _ := http.NewRequest("GET", fmt.Sprintf("/%s", key), nil)
+	w := httptest.NewRecorder()
+	handleTestRequest(w, request)
+	if w.Code != 200 {
+		t.Error("read message is not 200")
+	}
+
+	result := w.Result()
+	defer result.Body.Close()
+	data, _ := ioutil.ReadAll(result.Body)
+	if !strings.Contains(string(data), testMessage) {
+		t.Error("result page without key")
+	}
+
+	_, err := keeper.Get(key)
+	if err == nil {
+		t.Error("delete now working, keeper value must be empty")
+	}
+}
+
+func TestReadMessageNotFound(t *testing.T) {
+	key := keyBuilder.Get()
+	request, _ := http.NewRequest("GET", fmt.Sprintf("/%s", key), nil)
+	w := httptest.NewRecorder()
+	handleTestRequest(w, request)
+	if w.Code != 404 {
+		t.Error("empty message must be 404")
 	}
 }

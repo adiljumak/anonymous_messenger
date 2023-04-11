@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func TestDummyKeeperSet(t *testing.T) { 
+func TestDummyKeeperSet(t *testing.T) {
 	keeper := DummyKeeper{mem: make(map[string]string)}
 	key := "foo"
 	value := "bar"
@@ -12,7 +12,7 @@ func TestDummyKeeperSet(t *testing.T) {
 	}
 }
 
-func TestDummyKeeperGet(t *testing.T) { 
+func TestDummyKeeperGet(t *testing.T) {
 	keeper := DummyKeeper{mem: make(map[string]string)}
 	key := "foo"
 	value := "bar"
@@ -23,7 +23,7 @@ func TestDummyKeeperGet(t *testing.T) {
 	}
 }
 
-func TestDummyKeeperClean(t *testing.T) { 
+func TestDummyKeeperClean(t *testing.T) {
 	keeper := DummyKeeper{mem: make(map[string]string)}
 	key := "foo"
 	value := "bar"
