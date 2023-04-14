@@ -36,4 +36,4 @@ func getKeeper() Keeper {
 	return DummyKeeper{make(map[string]string)}
 }
 
-var keeper = getKeeper()
+

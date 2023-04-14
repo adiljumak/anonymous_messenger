@@ -8,9 +8,11 @@ import (
 	"strings"
 	"testing"
 )
+var keeper = getKeeper()
 
 func handleTestRequest(w *httptest.ResponseRecorder, r *http.Request) {
-	router := getRouter()
+	keyBuilder := getKeyBuilder()
+	router := getRouter(keyBuilder, keeper)
 	router.ServeHTTP(w, r)
 }
 
@@ -33,6 +35,7 @@ func TestSaveMessage(t *testing.T) {
 	if w.Code != 200 {
 		t.Error("save is not 200")
 	}
+	keyBuilder := getKeyBuilder()
 	key := keyBuilder.Get()
 	savedMessage, _ := keeper.Get(key)
 
@@ -50,6 +53,7 @@ func TestSaveMessage(t *testing.T) {
 
 func TestReadMessage(t *testing.T) {
 	testMessage := "helloMessage"
+	keyBuilder := getKeyBuilder()
 	key := keyBuilder.Get()
 	keeper.Set(key, testMessage)
 
@@ -74,6 +78,7 @@ func TestReadMessage(t *testing.T) {
 }
 
 func TestReadMessageNotFound(t *testing.T) {
+	keyBuilder := getKeyBuilder()
 	key := keyBuilder.Get()
 	request, _ := http.NewRequest("GET", fmt.Sprintf("/%s", key), nil)
 	w := httptest.NewRecorder()
