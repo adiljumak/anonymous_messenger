@@ -36,7 +36,7 @@ func TestSaveMessage(t *testing.T) {
 		t.Error("save is not 200")
 	}
 	keyBuilder := getKeyBuilder()
-	key := keyBuilder.Get()
+	key, _ := keyBuilder.Get()
 	savedMessage, _ := keeper.Get(key)
 
 	if savedMessage != testMessage {
@@ -54,7 +54,7 @@ func TestSaveMessage(t *testing.T) {
 func TestReadMessage(t *testing.T) {
 	testMessage := "helloMessage"
 	keyBuilder := getKeyBuilder()
-	key := keyBuilder.Get()
+	key, _ := keyBuilder.Get()
 	keeper.Set(key, testMessage)
 
 	request, _ := http.NewRequest("GET", fmt.Sprintf("/%s", key), nil)
@@ -79,7 +79,7 @@ func TestReadMessage(t *testing.T) {
 
 func TestReadMessageNotFound(t *testing.T) {
 	keyBuilder := getKeyBuilder()
-	key := keyBuilder.Get()
+	key, _ := keyBuilder.Get()
 	request, _ := http.NewRequest("GET", fmt.Sprintf("/%s", key), nil)
 	w := httptest.NewRecorder()
 	handleTestRequest(w, request)

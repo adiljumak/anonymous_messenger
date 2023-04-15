@@ -39,8 +39,13 @@ func readMessageView(c *gin.Context, keyBuilder KeyBuilder, keeper Keeper) {
 
 func saveMessageView(c *gin.Context, keyBuilder KeyBuilder, keeper Keeper) {
 	message := c.PostForm("message")
-	key := keyBuilder.Get()
-	err := keeper.Set(key, message)
+	key, err := keyBuilder.Get()
+	if err != nil {
+		writeInternalError(c)
+		return 
+	}
+	
+	err = keeper.Set(key, message)
 	if err != nil {
 		writeInternalError(c)
 		return 
@@ -70,7 +75,7 @@ func getRouter(keyBuilder KeyBuilder, keeper Keeper) *gin.Engine {
 }
 
 func main() {
-	keyBuilder := getKeyBuilder()
+	keyBuilder := UUIDKeyBuilder{} 
 	keeper := getKeeper()
 	router := getRouter(keyBuilder, keeper)
 	router.Run("localhost:8080")
