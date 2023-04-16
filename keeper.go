@@ -1,6 +1,10 @@
 package main
 
-import "errors"
+import (
+	"context"
+
+	"github.com/go-redis/redis/v8"
+)
 
 const NotFoundError = "not_found"
 
@@ -10,30 +14,18 @@ type Keeper interface {
 	Clean(key string) error
 }
 
-type DummyKeeper struct {
-	mem map[string]string
-}
-
-func (k DummyKeeper) Get(key string) (string, error) {
-	value, ok := k.mem[key]
-	if !ok {
-		return "", errors.New(NotFoundError)
-	}
-	return value, nil
-}
-
-func (k DummyKeeper) Set(key string, message string) error {
-	k.mem[key] = message
-	return nil
-}
-
-func (k DummyKeeper) Clean(key string) error {
-	delete(k.mem, key)
-	return nil
-}
-
-func getKeeper() Keeper {
+func getDummyKeeper() Keeper {
 	return DummyKeeper{make(map[string]string)}
 }
 
+func getRedisKeeper() Keeper {
+	return RedisKeeper{
+		cn: *redis.NewClient(&redis.Options{
+			Addr:     "localhost:6379",
+			Password: "",
+			DB:       0,
+		}),
+		ctx: context.Background(),
+	}
 
+}

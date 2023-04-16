@@ -44,7 +44,7 @@ func saveMessageView(c *gin.Context, keyBuilder KeyBuilder, keeper Keeper) {
 		writeInternalError(c)
 		return 
 	}
-	
+
 	err = keeper.Set(key, message)
 	if err != nil {
 		writeInternalError(c)
@@ -76,7 +76,7 @@ func getRouter(keyBuilder KeyBuilder, keeper Keeper) *gin.Engine {
 
 func main() {
 	keyBuilder := UUIDKeyBuilder{} 
-	keeper := getKeeper()
+	keeper := getRedisKeeper()
 	router := getRouter(keyBuilder, keeper)
 	router.Run("localhost:8080")
 }

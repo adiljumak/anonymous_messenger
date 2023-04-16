@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 )
-var keeper = getKeeper()
+var keeper = getDummyKeeper()
 
 func handleTestRequest(w *httptest.ResponseRecorder, r *http.Request) {
 	keyBuilder := getKeyBuilder()
